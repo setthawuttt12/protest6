@@ -1,73 +1,41 @@
 const express = require('express')
 const db = require('../../db')
-const path = require('path')
-const fs = require('fs')
-const uploadDir = path.join(__dirname,'../../uploads/document')
 const router = express.Router()
+const {requireRole,verifyToken} = require('../../middleware/authmiddleware')
+const fs = require('fs')
 const bc = require('bcrypt')
-const {verifyToken , requireRole} = require('../../middleware/authMiddleware')
+const path = require('path')
+const uploadDir = path.join(__dirname, '../../uploads/signature')
 
-// ========= DEMO ====
-// API สำหรับ Get ข้อมูล
-// router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
-//     try{
-//         const [rows] = await db.query(``)
-//         res.json(rows)
-//         // res.json({rows,message:'Insert Success!'})
-//     }catch(err){
-//         console.error("Error Get",err)
-//         res.status(500).json({message:'Error Get'})
-//     }
-// })
-// =============== DEMO =====
-
-// API สำหรับ Get ข้อมูล
-router.get('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
+router.get('/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async (req,res) => {
     try{
-        const [rows] = await db.query(`select * from tb_doc order by id_doc desc`)
-        res.json(rows)
-        // res.json({rows,message:'Insert Success!'})
+        const id_member = req.user.id_member
+        const id_eva = req.params.id_eva
+        const [rows] = await db.query(`select * from tb_member m,tb_eva e,tb_system s,tb_commit c where c.id_member=? and c.id_eva=? and e.id_sys=s.id_sys and e.id_member=m.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,[id_member,id_eva])
+        res.json(rows[0])
     }catch(err){
-        console.error("Error Get",err)
-        res.status(500).json({message:'Error Get'})
+        console.error("Error GET User",err)
+        res.status(500).json({message:'Error GET User'})
     }
 })
 
-// API สำหรับ upload ข้อมูล
-router.post('/',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
-    try{
-        const {name_doc} = req.body
+router.post('/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async(req,res)=>{
+    try {
+        const id_member = req.user.id_member
+        const id_eva = req.params.id_eva
         const file = req.files?.file
-
-        const maxSize = 10 * 1024 * 1024 // 10 MB (สููตรการคำนวณขนาดไฟล์ หาก 5 MB = 5 * 1024 * 1024)
-        if(file.size > maxSize){
-            return res.status(400).json({message:'ไฟล์มีขนาดใหญ่เกินไป (จำกัดไม่เกิน 10MB)'})
-        }
-        const filename = Date.now() + path.extname(file.name)
+        const filename = Date.now()+ path.extname(file.name)
         await file.mv(path.join(uploadDir,filename))
-        await db.query(`insert into tb_doc (name_doc,day_doc,file) values (?,CURDATE(),?)`,[name_doc,filename])
-        res.status(201).json({message:'Upload Success'})
-    }catch(err){
-        console.error("Error Upload",err)
-        res.status(500).json({message:'Error Upload'})
-    }
-})
-
-// API สำหรับ Delete ข้อมูล
-router.delete('/:id_doc',verifyToken,requireRole('ฝ่ายบุคลากร'),async (req,res) => {
-    try{
-        const {id_doc} = req.params
-        const [[d]] = await db.query(`select file from tb_doc where id_doc='${id_doc}'`)
-        const fp = path.join(uploadDir,d.file)
-        if(fs.existsSync(fp)){
-            fs.unlinkSync(fp)
+        await db.query(`update tb_commit set signature=? where id_eva=? and id_member=?`,[filename,id_eva,id_member])
+        const [SumCommit] = await db.query(`select * from tb_commit where status_commit=? and signature is not null and id_eva=?`,['y',id_eva])
+        if(SumCommit.length === 3){
+            await db.query(`update tb_eva set status_eva=? where id_eva=?`,[3,id_eva])
         }
-        await db.query(`delete from tb_doc where id_doc='${id_doc}'`)
-        res.json({message:'Delete Success!'})
-    }catch(err){
-        console.error("Error Delete",err)
-        res.status(500).json({message:'Error Delete'})
+        res.status(201).json({message:'Update Success'})
+    } catch (error) {
+        console.error("Error Uploads",error)
+        res.status(500).json({message:'Error Uploads'})
     }
 })
 
-module.exports = router
+module.exports =router
