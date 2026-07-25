@@ -6,7 +6,7 @@
                     <v-card-title>
                         <h1 class="text-h5 text-center">จัดการรอบการประเมิน</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row>
@@ -23,12 +23,12 @@
                                     <v-text-field label="ปีการประเมิน" v-model="form.year_sys" :error-messages="error.year_sys" ></v-text-field>
                                 </v-col>
                                 <v-col md="12" cols="12">
-                                    <v-select label="สถานะการประเมิน" v-model="form.status_sys" :error-messages="error.status_sys"></v-select>
+                                    <v-select label="สถานะการประเมิน" v-model="form.status_sys" :error-messages="error.status_sys" :items="[{title:'เปิด',value:'y'},{title:'ปิด',value:'n'}]"></v-select>
                                 </v-col>
                                 <v-col md="12" cols="12">
                                     <center>
-                                        <v-btn class="text-center m-1" color="primary" type="submit">{{ form.id_sys ? 'อัปเดต' :'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center m-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-1" color="primary" type="submit">{{ form.id_sys ? 'อัปเดต' :'บันทึก' }}</v-btn>
+                                        <v-btn class="text-center ma-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -158,6 +158,8 @@ const saveMember = async()=>{
         alert('ทำรายการสำเร็จ')
         await fetch()
         await reset()
+        form.value.day_open = ''
+        form.value.day_close = ''
     } catch (error) {
         console.error("Error round",error)
     }
@@ -171,7 +173,7 @@ const edit = (items:any)=>{
 }
 
 const del = async(id_sys:number)=>{
-
+    if(!confirm('ต้องการลบข้อมูลชุดนี้')) return
     try {
         
         await axios.delete(`${staff}/round/delete/${id_sys}`,{headers:{Authorization:`Bearer ${token}`}})

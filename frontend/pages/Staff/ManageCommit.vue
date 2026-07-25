@@ -6,7 +6,7 @@
                     <v-card-title>
                         <h1 class="text-h5 text-center">จัดการกรรมการประเมิน</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row>
@@ -33,8 +33,8 @@
                                 </v-col>
                                 <v-col md="12" cols="12">
                                     <center>
-                                        <v-btn class="text-center m-1" color="primary" type="submit">{{ form.id_member ? 'อัปเดต' :'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center m-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-1" color="primary" type="submit">{{ form.id_member ? 'อัปเดต' :'บันทึก' }}</v-btn>
+                                        <v-btn class="text-center ma-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -119,7 +119,7 @@ const reset = () => {
 
 }
 
-const emailRegex = /^[^\s]+@[^\s]+[^\s]+\.[^\s]{,2}$/i
+const emailRegex = /^[^\s]+@[^\s]+[^\s]+\.[^\s]{2,}$/i
 
 function validateForm(){
 
@@ -213,7 +213,7 @@ const edit = (items:any)=>{
 }
 
 const del = async(id_member:number)=>{
-
+    if(!confirm('ต้องการลบข้อมูลชุดนี้')) return
     try {
         
         await axios.delete(`${staff}/member/delete/${id_member}`,{headers:{Authorization:`Bearer ${token}`}})

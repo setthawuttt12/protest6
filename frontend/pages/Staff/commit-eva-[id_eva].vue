@@ -16,7 +16,7 @@
                     <v-card-title>
                         <h1 class="text-h5 text-center">เพิ่มกรรมการประเมิน</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row v-for="(c,index) in List" :key="c.id_commit">
@@ -28,8 +28,8 @@
                                 </v-col>
                             </v-row>
                             <center>
-                                <v-btn class="text-center m-1" color="primary" type="submit">บันทีก</v-btn>
-                                <v-btn class="text-center m-1" color="#7d0c14" type="reset">ยกเลิก</v-btn>
+                                <v-btn class="text-center ma-1" color="primary" type="submit">บันทีก</v-btn>
+                                <v-btn class="text-center ma-1" color="#7d0c14" type="reset">ยกเลิก</v-btn>
                             </center>
                         </v-form>
                         <v-table>
@@ -112,7 +112,7 @@ const fetch = async()=>{
 
 }
 
-const nameMap = computed(()=> Object.fromEntries(people.value.map((p)=>[p.fullname_commit,p.id_member])))
+const nameMap = computed(()=> Object.fromEntries(people.value.map((p)=>[p.id_member,p.fullname_commit])))
 const nameOf = (id:number) => nameMap.value[id]
 
 const MEMBER = (idx:number) =>{
@@ -132,7 +132,7 @@ const ROLE = (idx:number) =>{
 const saveMember = async()=>{
 
     try {
-        await axios.post(`${staff}/eva/save`,List.value,{headers:{Authorization:`Bearer ${token}`}})
+        await axios.post(`${staff}/eva/save/${id_eva}`,List.value,{headers:{Authorization:`Bearer ${token}`}})
         alert('ทำรายการสำเร็จ')
         await fetch()
     } catch (error) {
@@ -142,7 +142,7 @@ const saveMember = async()=>{
 }
 
 const del = async(id_commit:number)=>{
-
+    if(!confirm('ต้องการลบข้อมูลชุดนี้')) return
     try {
         
         await axios.delete(`${staff}/commit/delete/${id_commit}`,{headers:{Authorization:`Bearer ${token}`}})

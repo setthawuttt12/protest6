@@ -6,7 +6,7 @@
                     <v-card-title>
                         <h1 class="text-h5 text-center">ผลสรุปคะแนนผู้รับการประเมินผล</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <v-table>
                             <thead>
                                 <tr>
@@ -74,7 +74,8 @@ const fetch = async()=>{
 
 const bg = (status_eva:number)=>{
     if(status_eva === 1)return 'error'
-    else if(status_eva === 2)return 'wa'
+    else if(status_eva === 2)return 'warning'
+    else if(status_eva === 3)return 'success'
 }
 
 

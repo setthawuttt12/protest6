@@ -6,7 +6,7 @@
                     <v-card-title>
                         <h1 class="text-h5 text-center">จัดการแบบประเมิน</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row>
@@ -16,13 +16,13 @@
                                 <v-col md="6" cols="12">
                                     <v-select label="รอบการประเมิน" v-model="form.id_sys" :error-messages="error.id_sys" :items="round.map((t)=>({title:`รอบการประเมินที่:${t.round_sys} ปี${t.year_sys}`,value:t.id_sys}))"></v-select>
                                 </v-col>
-                                <v-col md="6" cols="12">
+                                <v-col md="12" cols="12">
                                     <v-text-field label="วันที่ออกแบบประเมิน" v-model="form.day_eva" :error-messages="error.day_eva" type="date"></v-text-field>
                                 </v-col>
                                 <v-col md="12" cols="12">
                                     <center>
-                                        <v-btn class="text-center m-1" color="primary" type="submit">{{ form.id_eva ? 'อัปเดต' :'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center m-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-1" color="primary" type="submit">{{ form.id_eva ? 'อัปเดต' :'บันทึก' }}</v-btn>
+                                        <v-btn class="text-center ma-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -55,7 +55,7 @@
                                     <td class="border text-center">
                                         <center>
                                             <v-btn size="small" class="text-center text-white ma-3" color="warning" @click="edit(items)">แก้ไข</v-btn>
-                                            <v-btn size="small" class="text-white ma-3" color="red" @click="del(items.id_member)">ลบ</v-btn>
+                                            <v-btn size="small" class="text-white ma-3" color="red" @click="del(items.id_eva)">ลบ</v-btn>
                                         </center>
                                     </td>
                                 </tr>
@@ -78,11 +78,8 @@ import { api, staff } from '~/API/base';
 const typeR = ['ผู้รับการประเมินผล']
 const pic_user = ref<File | null>(null)
 const error = ref<Record<string,string>>({})
-const conP = ref('')
-const show = ref(false)
-const show2 = ref(false)
-const showPw = ref(false)
-const showPw2 = ref(false)
+const eva = ref([])
+const round = ref([])
 const token = import.meta.client ? localStorage.getItem('token'):null
 const dataResult = ref([])
 const search = ref('')
@@ -128,6 +125,11 @@ const fetch = async()=>{
         
         const res = await axios.get(`${staff}/eva/show`,{headers:{Authorization:`Bearer ${token}`}})
         dataResult.value = res.data
+        const res2 = await axios.get(`${staff}/member/showE`,{headers:{Authorization:`Bearer ${token}`}})
+        eva.value = res2.data
+        const res3 = await axios.get(`${staff}/round/show`,{headers:{Authorization:`Bearer ${token}`}})
+        round.value = res3.data
+
 
     } catch (error) {
         console.error("Error fetching eva")
@@ -179,6 +181,7 @@ const edit = (items:any)=>{
 
 const del = async(id_eva:number)=>{
 
+    if(!confirm('ต้องการลบข้อมูลชุดนี้')) return
     try {
         
         await axios.delete(`${staff}/eva/delete/${id_eva}`,{headers:{Authorization:`Bearer ${token}`}})

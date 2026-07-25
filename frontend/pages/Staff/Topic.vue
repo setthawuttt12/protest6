@@ -4,9 +4,9 @@
             <v-col cols="12" md="12">
                 <v-card>
                     <v-card-title>
-                        <h1 class="text-h5 text-center">จัดการผู้รับการประเมินผล</h1>
+                        <h1 class="text-h5 text-center">จัดการหัวข้อการประเมิน</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row>
@@ -15,8 +15,8 @@
                                 </v-col>
                                 <v-col md="12" cols="12">
                                     <center>
-                                        <v-btn class="text-center m-1" color="primary" type="submit">{{ form.id_topic ? 'อัปเดต' :'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center m-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-1" color="primary" type="submit">{{ form.id_topic ? 'อัปเดต' :'บันทึก' }}</v-btn>
+                                        <v-btn class="text-center ma-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -140,8 +140,8 @@ const saveMember = async()=>{
 
     try {
         f.id_topic
-        ?await axios.put(`${staff}/member/update/${f.id_topic}`,f,{headers:{Authorization:`Bearer ${token}`}})
-        :await axios.post(`${staff}/member/save`,f,{headers:{Authorization:`Bearer ${token}`}})
+        ?await axios.put(`${staff}/topic/update/${f.id_topic}`,f,{headers:{Authorization:`Bearer ${token}`}})
+        :await axios.post(`${staff}/topic/save`,f,{headers:{Authorization:`Bearer ${token}`}})
         alert('ทำรายการสำเร็จ')
         await fetch()
         await reset()
@@ -158,7 +158,7 @@ const edit = (items:any)=>{
 }
 
 const del = async(id_topic:number)=>{
-
+    if(!confirm('ต้องการลบข้อมูลชุดนี้')) return
     try {
         
         await axios.delete(`${staff}/topic/delete/${id_topic}`,{headers:{Authorization:`Bearer ${token}`}})

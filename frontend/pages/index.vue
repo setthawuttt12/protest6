@@ -1,11 +1,13 @@
 <template>
     <v-container>
         <v-row justify="center">
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="8">
                 <v-card color="#7d0c14">
                     <v-card-title>
-                        <center><v-img src="/img/logo.png" width="20%"></v-img></center>
+                        <center><v-img src="/img/logo.png" width="30%"></v-img></center>
                         <h1 class="text-h5 text-center">เข้าสู่ระบบ</h1>
+                        <h2 class="text-center">NTC EVALUATION SYSTEM</h2>
+                        <h3 class="text-center">ระบบประเมินบุคลากรวิทยาลัยเทคนิคน่าน</h3>
                     </v-card-title>
                     <v-card-text class="bg-white">
                         <br>
@@ -13,13 +15,13 @@
                         <v-form @submit.prevent="Login">
                             <v-row>
                                  <v-col md="12" cols="12">
-                                    <v-text-field label="ชื่อผู้ใช้" v-model="form.username" :error-messages="error.username" prepend-inner-icon="mdi-account"></v-text-field>
+                                    <v-text-field label="ชื่อผู้ใช้" v-model="username" prepend-inner-icon="mdi-account"></v-text-field>
                                 </v-col>
                                  <v-col md="12" cols="12">
-                                    <v-text-field label="รหัสผ่าน" v-model="form.password" :error-messages="error.password" :prepend-inner-icon="show ? 'mdi-eye':'mdi-eye-off'" :type="showPw ? 'text':'password'" @click:prepend-inner="show = !show , showPw = !showPw"></v-text-field>
+                                    <v-text-field label="รหัสผ่าน" v-model="password" :prepend-inner-icon="show ? 'mdi-eye':'mdi-eye-off'" :type="showPw ? 'text':'password'" @click:prepend-inner="show = !show , showPw = !showPw"></v-text-field>
                                 </v-col>
                                 <v-col md="12" cols="12">
-                                    <v-select label="ประเภทสมาชิก" v-model="form.role" :error-messages="error.role" prepend-inner-icon="mdi-account-group" :items="typeR"></v-select>
+                                    <v-select label="ประเภทสมาชิก" v-model="role" prepend-inner-icon="mdi-account-group" :items="typeR"></v-select>
                                 </v-col>
                                 <v-col md="12" cols="12">
                                     <center>
@@ -53,6 +55,12 @@ const show2 = ref(false)
 const showPw = ref(false)
 const showPw2 = ref(false)
 
+definePageMeta(
+    {
+        layout:false
+    }
+)
+
 const Login = async()=>{
 
     try {
@@ -71,7 +79,7 @@ const Login = async()=>{
         else if(userRole === 'ผู้รับการประเมินผล')useRouter().push('/Evaluatee')
         else if(userRole === 'กรรมการประเมิน')useRouter().push('/Committee')
     } catch (err:any) {
-        console.error("Error Register",error)
+        console.error("Error login",error)
         error.value = err.response?.data?.message || 'เข้าสู่ระบบไม่สำเร็จ'
     }
 

@@ -64,6 +64,12 @@ const show2 = ref(false)
 const showPw = ref(false)
 const showPw2 = ref(false)
 
+definePageMeta(
+    {
+        layout:false
+    }
+)
+
 const form = ref(
     {
         first_name:'',
@@ -75,7 +81,7 @@ const form = ref(
     }
 )
 
-const emailRegex = /^[^\s]+@[^\s]+[^\s]+\.[^\s]{,2}$/i
+const emailRegex = /^[^\s]+@[^\s]+[^\s]+\.[^\s]{2,}$/i
 
 function validateForm(){
 

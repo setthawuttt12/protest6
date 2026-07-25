@@ -6,12 +6,12 @@
                     <v-card-title>
                         <h1 class="text-h5 text-center">จัดการตัวชี้วัด</h1>
                     </v-card-title>
-                    <v-card-text class="bg-white">
+                    <v-card-text >
                         <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row>
                                 <v-col md="6" cols="12">
-                                    <v-select label="หัวข้อการประเมิน" v-model="form.id_topic" :error-messages="error.id_topic" prepend-inner-icon="mdi-information" :items="topics.map((t)=>({title:t.name_topic,value:t.id_member}))"></v-select>
+                                    <v-select label="หัวข้อการประเมิน" v-model="form.id_topic" :error-messages="error.id_topic" prepend-inner-icon="mdi-information" :items="topics.map((t)=>({title:t.name_topic,value:t.id_topic}))"></v-select>
                                 </v-col>
                                 <v-col md="6" cols="12">
                                     <v-text-field label="ชื่อตัวชี้วัด" v-model="form.name_indicate" :error-messages="error.name_indicate"></v-text-field>
@@ -27,8 +27,8 @@
                                 </v-col>
                                 <v-col md="12" cols="12">
                                     <center>
-                                        <v-btn class="text-center m-1" color="primary" type="submit">{{ form.id_indicate ? 'อัปเดต' :'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center m-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-1" color="primary" type="submit">{{ form.id_indicate ? 'อัปเดต' :'บันทึก' }}</v-btn>
+                                        <v-btn class="text-center ma-1" color="#7d0c14" @click="reset()">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -92,6 +92,7 @@ const showPw2 = ref(false)
 const token = import.meta.client ? localStorage.getItem('token'):null
 const dataResult = ref([])
 const search = ref('')
+const topics = ref([])
 
 const form = ref(
     {
@@ -126,9 +127,9 @@ function validateForm(){
 
     if(!f.id_topic)error.value.id_topic = 'กรุณาเลือกหัวข้อการประเมิน'
     if(!f.name_indicate.trim())error.value.name_indicate = 'กรุณากรอกชื่อตัวชี้วัด'
-    if(!f.point_indicate.trim())error.value.point_indicate = 'กรุณาเลือกน้ำหนักคะแนน'
+    if(!f.point_indicate)error.value.point_indicate = 'กรุณาเลือกน้ำหนักคะแนน'
 
-    if(!f.check_indicate.trim())error.value.check_indicate = 'กรุณาเลือกประเภทตัวเลือก'
+    if(!f.check_indicate)error.value.check_indicate = 'กรุณาเลือกประเภทตัวเลือก'
 
     return Object.keys(error.value).length === 0
 
@@ -140,7 +141,8 @@ const fetch = async()=>{
         
         const res = await axios.get(`${staff}/indicate/show`,{headers:{Authorization:`Bearer ${token}`}})
         dataResult.value = res.data
-
+        const res2 = await axios.get(`${staff}/topic/show`,{headers:{Authorization:`Bearer ${token}`}})
+        topics.value = res2.data
     } catch (error) {
         console.error("Error fetching showE")
     }
@@ -189,7 +191,7 @@ const edit = (items:any)=>{
 }
 
 const del = async(id_indicate:number)=>{
-
+    if(!confirm('ต้องการลบข้อมูลชุดนี้')) return
     try {
         
         await axios.delete(`${staff}/indicate/delete/${id_indicate}`,{headers:{Authorization:`Bearer ${token}`}})
