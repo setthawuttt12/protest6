@@ -32,7 +32,13 @@ const saveScore = async()=>{
                 detail_eva:i.detail_eva,
                 file_key:file ? `file_${key}` :null
             }
-        }))
+        })
+    )
+    if(allScore.some((s:any)=>!s.score)){
+        alert('กรุณากรอกคะแนนให้สมบูรณ์')
+        return
+    }
+    formData.append
 }
 const fileMap = ref<Record<string,File>>({})
 </script>
