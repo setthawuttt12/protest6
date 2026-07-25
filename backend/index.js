@@ -37,6 +37,9 @@ app.use('/api/Commit/show_eva',show_eva)
 const save_score = require('./routes/Commit/save_score')
 app.use('/api/Commit/save_score',save_score)
 
+const check_confirm = require('./routes/Commit/check_confirm')
+app.use('/api/Commit/check_confirm',check_confirm)
+
 
 app.use((req,res)=> res.status(404).json({message:'404 Invalid Route09'}))
 app.listen(3001, ()=> console.log("SERVER RUNNIG ON PORT 3001"))

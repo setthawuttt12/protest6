@@ -25,7 +25,7 @@
                             <td class="text-center border">{{ items.last_name }}</td>
                             <td class="text-center border">{{ items.day_eva }}</td>
                             <td class="text-center border">รอบการประเมินที่{{ items.round_sys }} ปี {{ year_sys }}</td>
-                            <td class="text-center border"><v-btn color="blue" clss="text-white" size="small" @click="checkNuxtCompatibility(items.id_eva)">ตรวจสอบ</v-btn></td>
+                            <td class="text-center border"><v-btn color="blue" clss="text-white" size="small" @click="go(items.id_eva)">ตรวจสอบ</v-btn></td>
                             <td class="text-center border">
                                 <v-btn v-if="items.signature" color="success" class="text-white" size="small" @click="go(items.id_eva)">ยืนยันผลแล้ว</v-btn>
                                         <v-btn v-else color="blue" class="text-white" size="small" @click="go(items.id_eva)">ยืนยันผล</v-btn>

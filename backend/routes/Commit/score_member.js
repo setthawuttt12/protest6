@@ -3,7 +3,7 @@ const db = require('../../db')
 const router = express.Router()
 const {requireRole,verifyToken} = require('../../middleware/authMiddleware')
 
-router.get('/user',verifyToken,requireRole('กรรมการประเมิน'),async (req,res) => {
+router.get('/user/:id_eva', verifyToken, requireRole('กรรมการประเมิน'), async (req, res) => {
     try{
         const id_member = req.user.id_member
         const id_eva = req.params.id_eva

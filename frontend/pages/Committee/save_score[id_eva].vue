@@ -2,8 +2,8 @@
     <v-container>
         <v-row>
             <v-col cols="12">
-                 1<v-alert type="info" v-if="user.status_eva ===1">ผู้รับการประเมินยังไม่ได้ประเมินตนเอง</v-alert>
-                <v-form v-if="user.status_eva === 1" @submit.prevent="saveScore">
+                <v-alert type="info" v-if="user.status_eva === 1">ผู้รับการประเมินยังไม่ได้ประเมินตนเอง</v-alert>
+                <v-form v-else-if="user.status_commit === 'n'" @submit.prevent="saveScore">
                     <h1 class="text-h5 font-weight-bold">แบบประเมินตนเอง</h1>
                     <v-card class="pa-2 mt-2">
                         <p>ชื่อ - นามสกุล : {{ user.first_name }} {{ user.last_name }}</p>
@@ -18,7 +18,7 @@
                                         {{ t+1 }}.{{ i+1 }} {{ indicate.name_indicate }} รายละเอียดตัวชี้วัด : {{ indicate.detail_indicate }} น้ำหนักคะแนน : {{ indicate.point_indicate }} คะแนนเต็ม : {{ indicate.point_indicate*4 }}
                                         <p class="mt-2">รายละเอียด : {{ indicate.detail_eva || '-' }}</p>
                                         <p class="mt-2">file : <v-btn v-if="indicate.file_eva" size="small" @click="viweFile(indicate.file_eva)" color="blue">เปิดดู</v-btn><span v-else>-</span></p>
-                                        <v-select class="mt-2" label="ใส่คะแนนประเมิน 1-4" :items="[1234]" v-model="indicate.score"></v-select>
+                                        <v-select class="mt-2" label="ใส่คะแนนประเมิน 1-4" :items="[1,2,3,4]" v-model="indicate.score"></v-select>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -36,12 +36,12 @@
                 </v-form>
                 <v-alert type="success" v-else-if="user.status_commit === 'y'">ประเมินสำเร็จ</v-alert>
                 <v-alert type="warning" v-else>ยังไม่มีแบบประเมิน</v-alert>
+            </v-col>
         </v-row>
     </v-container>
 </template>
 
 <script setup lang="ts">
-
 import axios from 'axios'
 import {commit} from '../../API/base'
 

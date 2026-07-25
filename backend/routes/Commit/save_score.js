@@ -37,33 +37,33 @@ router.get('/topic/:id_eva',verifyToken,requireRole('กรรมการปร
     }
 })
 
-router.post('/save',verifyToken,requireRole('ผู้รับการประเมินผล'),async (req,res) => {
+router.post('/save/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async (req,res) => {
     try{
         const id_member = req.user.id_member
-                const id_eva = req.params.id_eva
-                const scores = JSON.parse(req.body.scores)
-                const detail_commit = req.body.detail_commit
-                const [[RowCommit]] = await db.query(`select * from tb_commit where id_member=? and id_eva=?`,[id_member,id_eva])
-                var statusCommit = 0
-                if(RowCommit.level_commit === 'ประธาน'){
-                    statusCommit = 2
-                }else if(RowCommit.level_commit === 'กรรมการ'){
-                    statusCommit = 3
-                }else if(RowCommit.level_commit === 'เลขา'){
-                    statusCommit = 4
-                }
-                for(const item of scores){
-                    await db.query(
-                        `insert into tb_evadetail (id_eva,id_indicate,status_eva,score_commit) values(?,?,?,?)`,
-                        [id_eva,item.id_indicate,statusCommit,item.score]
-                    )
-                }
-                const [[sumRow]] = await db.query(
-                    `select coalesce(sum(score_commit*(select i.point_indicate from tb_indicate i where i.id_indicate=d.id_indicate)),0) as total
-                    from tb_evadetail d where d.id_eva=?`,[id_eva]
-                )
-                await db.query(`update tb_eva set total_commit=? where id_eva=?`,[sumRow.total,id_eva])
-                await db.query(`update tb_commit set detail_commit=?,status_commit=? where id_eva=? and id_member=?`,[detail_commit,'y',id_eva,id_member])
+        const id_eva = req.params.id_eva
+        const scores = JSON.parse(req.body.scores)
+        const detail_commit = req.body.detail_commit
+        const [[RowCommit]] = await db.query(`select * from tb_commit where id_member=? and id_eva=?`,[id_member,id_eva])
+        var statusCommit = 0
+        if(RowCommit.level_commit === 'ประธาน'){
+            statusCommit = 2
+        }else if(RowCommit.level_commit === 'กรรมการ'){
+            statusCommit = 3
+        }else if(RowCommit.level_commit === 'เลขา'){
+            statusCommit = 4
+        }
+        for(const item of scores){
+            await db.query(
+                `insert into tb_evadetail (id_eva,id_indicate,status_eva,score_commit) values(?,?,?,?)`,
+                [id_eva,item.id_indicate,statusCommit,item.score]
+            )
+        }
+        const [[sumRow]] = await db.query(
+            `select coalesce(sum(score_commit*(select i.point_indicate from tb_indicate i where i.id_indicate=d.id_indicate)),0) as total
+            from tb_evadetail d where d.id_eva=?`,[id_eva]
+        )
+        await db.query(`update tb_eva set total_commit=? where id_eva=?`,[sumRow.total,id_eva])
+        await db.query(`update tb_commit set detail_commit=?,status_commit=? where id_eva=? and id_member=?`,[detail_commit,'y',id_eva,id_member])
         res.json({message:'POST Score Success'})
     }catch(err){
         console.error("Error POST Score",err)
